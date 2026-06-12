@@ -1,0 +1,60 @@
+services:
+  # Flask Web Service for Slack Interactive Endpoints
+  - type: web
+    name: jira-automation-flask
+    env: python
+    region: oregon
+    plan: free
+    branch: master
+    buildCommand: "cd jira-automation && pip install -r requirements.txt"
+    startCommand: "cd jira-automation && python flask_app.py"
+    envVars:
+      - key: JIRA_URL
+        sync: false
+      - key: JIRA_PAT_TOKEN
+        sync: false
+      - key: JIRA_PROJECT_KEY
+        sync: false
+      - key: JIRA_QUEUE_JQL
+        sync: false
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: SLACK_BOT_TOKEN
+        sync: false
+      - key: SLACK_CHANNEL_ID
+        sync: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 5000
+
+  # Background Worker for Scheduled Tasks
+  - type: worker
+    name: jira-automation-scheduler
+    env: python
+    region: oregon
+    plan: free
+    branch: master
+    buildCommand: "cd jira-automation && pip install -r requirements.txt && pip install schedule==1.2.0"
+    startCommand: "cd jira-automation && python scheduler.py"
+    envVars:
+      - key: JIRA_URL
+        sync: false
+      - key: JIRA_PAT_TOKEN
+        sync: false
+      - key: JIRA_PROJECT_KEY
+        sync: false
+      - key: JIRA_QUEUE_JQL
+        sync: false
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: SLACK_BOT_TOKEN
+        sync: false
+      - key: SLACK_CHANNEL_ID
+        sync: false
+      - key: LOG_LEVEL
+        value: INFO
+
+# Made with Bob
