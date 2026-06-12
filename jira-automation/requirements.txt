@@ -4,7 +4,7 @@
 jira==3.5.2
 
 # AI/ML - Mistral AI
-mistralai==0.4.0
+mistralai==0.1.8
 
 # Slack Integration
 slack-sdk==3.27.1
