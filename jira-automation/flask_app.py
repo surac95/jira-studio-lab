@@ -247,6 +247,7 @@ def not_found(error):
             'GET /stats',
             'GET /test'
         ]
+    })
 
 
 @app.route('/slack/interactive', methods=['POST'])
@@ -411,9 +412,6 @@ def handle_reanalyze_request(ticket_key: str, response_url: str):
             )
         except:
             pass
-
-
-    }), 404
 
 
 @app.errorhandler(500)
