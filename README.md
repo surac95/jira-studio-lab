@@ -1,44 +1,60 @@
 # JIRA Incident Ticket Automation System
 
-An AI-powered automation system that monitors JIRA L3/L4 support queues, classifies incidents using Mistral AI, assigns tickets based on team workload, and notifies the team via Slack.
+An AI-powered automation system that monitors JIRA L3/L4 support queues, classifies incidents using Mistral AI, assigns tickets based on team workload, and notifies the team via Slack with interactive features.
 
 ## 🎯 Features
 
-- **Automated Ticket Monitoring**: Continuously monitors JIRA L3/L4 queues for new incidents
+- **Automated Ticket Monitoring**: Continuously monitors JIRA queues for unassigned incidents
 - **AI-Powered Classification**: Uses Mistral AI to classify tickets into TRIRIGA, APIC, or APPC categories
+- **Deep Technical Analysis**: On-demand AI analysis with root cause, solutions, and impact assessment
 - **Intelligent Assignment**: Assigns tickets based on team member specialization and current workload
 - **AI Summarization**: Generates concise summaries of ticket content for quick understanding
-- **Slack Integration**: Sends real-time notifications to team channels
-- **Scheduled Execution**: Runs automatically every 15 minutes via cron job
+- **Slack Integration**: Interactive notifications with buttons for deep analysis and re-analysis
+- **Scheduled Execution**: Runs automatically every hour via Supervisor
+- **Web API**: HTTP endpoints for manual triggering and health checks
+- **VPS Deployment**: Production-ready deployment on Hostinger VPS
 
 ## 📋 Prerequisites
 
-- Python 3.10 or higher
+- Python 3.12 or higher
 - JIRA Server access with PAT token
-- Mistral AI API key
+- Mistral AI API key (v1.0.0+)
 - Slack Bot token with appropriate permissions
-- Linux/Unix system with cron (or Windows with Task Scheduler)
+- VPS or cloud hosting (Hostinger, AWS, etc.)
 
 ## 🚀 Quick Start
 
-### 1. Clone the Repository
+### Option 1: VPS Deployment (Recommended)
 
+**For production deployment on Hostinger VPS:**
+
+See **[VPS_DEPLOYMENT_INSTRUCTIONS.md](VPS_DEPLOYMENT_INSTRUCTIONS.md)** for complete setup guide.
+
+Quick deploy:
 ```bash
-git clone <repository-url>
-cd jira-automation
+# On Windows
+.\deploy-to-vps.ps1
+
+# On Linux/Mac
+./deploy-to-vps.sh
 ```
 
-### 2. Set Up Python Environment
+### Option 2: Local Development
 
 ```bash
+# Clone the repository
+git clone https://github.com/surac95/jira-studio-lab.git
+cd jira-studio-lab/jira-automation
+
 # Create virtual environment
-python3 -m venv venv
+python3.12 -m venv venv
 
 # Activate virtual environment
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+pip install schedule==1.2.0
 ```
 
 ### 3. Configure Environment Variables
@@ -122,15 +138,22 @@ Run in dry-run mode to test without making changes:
 python main.py --dry-run
 ```
 
-### 6. Set Up Cron Job
+### 6. Run the System
 
-Add to crontab to run every 15 minutes:
-
+**Automated (Scheduler):**
 ```bash
-crontab -e
+python scheduler.py
+```
 
-# Add this line:
-*/15 * * * * cd /path/to/jira-automation && /path/to/venv/bin/python /path/to/jira-automation/main.py >> /path/to/jira-automation/logs/cron.log 2>&1
+**Manual (One-time):**
+```bash
+python main.py --max-tickets 10
+```
+
+**Web API (Flask):**
+```bash
+python flask_app.py
+# Access at http://localhost:5000
 ```
 
 ## 📁 Project Structure
@@ -342,86 +365,50 @@ graph TD
 
 ## 🚀 Deployment
 
-### Production Deployment
+### VPS Deployment (Production)
 
-1. **Server Setup**
-   ```bash
-   # Create dedicated user
-   sudo useradd -m -s /bin/bash automation-user
-   
-   # Install in /opt
-   sudo mkdir -p /opt/jira-automation
-   sudo chown automation-user:automation-user /opt/jira-automation
-   ```
+**Complete deployment guide**: [VPS_DEPLOYMENT_INSTRUCTIONS.md](VPS_DEPLOYMENT_INSTRUCTIONS.md)
 
-2. **Install Application**
-   ```bash
-   cd /opt/jira-automation
-   git clone <repository-url> .
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
+**Quick deploy to Hostinger VPS:**
+```bash
+# Automated deployment
+./deploy-to-vps.sh
 
-3. **Configure Systemd Timer** (Recommended)
-   
-   Create `/etc/systemd/system/jira-automation.service`:
-   ```ini
-   [Unit]
-   Description=JIRA Ticket Automation
-   After=network.target
+# Or manual deployment
+ssh root@31.97.231.244
+cd /home/jirabot
+git clone https://github.com/surac95/jira-studio-lab.git jira-automation
+cd jira-automation/jira-automation
+python3.12 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-   [Service]
-   Type=oneshot
-   User=automation-user
-   WorkingDirectory=/opt/jira-automation
-   Environment="PATH=/opt/jira-automation/venv/bin"
-   EnvironmentFile=/opt/jira-automation/.env
-   ExecStart=/opt/jira-automation/venv/bin/python /opt/jira-automation/main.py
-   StandardOutput=append:/opt/jira-automation/logs/automation.log
-   StandardError=append:/opt/jira-automation/logs/automation.log
-   ```
+**Services managed by Supervisor:**
+- `jira-automation-scheduler` - Runs every hour
+- `jira-automation-flask` - Web API and Slack interactive endpoints
 
-   Create `/etc/systemd/system/jira-automation.timer`:
-   ```ini
-   [Unit]
-   Description=Run JIRA Automation every 15 minutes
+**Service management:**
+```bash
+supervisorctl status              # Check status
+supervisorctl restart all         # Restart services
+supervisorctl stop all            # Stop services
+supervisorctl start all           # Start services
+```
 
-   [Timer]
-   OnBootSec=5min
-   OnUnitActiveSec=15min
-   AccuracySec=1min
+### Cloud Deployment Options
 
-   [Install]
-   WantedBy=timers.target
-   ```
+See deployment guides:
+- **[CLOUD_DEPLOYMENT.md](jira-automation/CLOUD_DEPLOYMENT.md)** - Render, Railway, Heroku
+- **[HOSTINGER_VPS_DEPLOYMENT.md](jira-automation/HOSTINGER_VPS_DEPLOYMENT.md)** - Detailed VPS setup
 
-   Enable and start:
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable jira-automation.timer
-   sudo systemctl start jira-automation.timer
-   ```
+## 📚 Documentation
 
-4. **Set Up Log Rotation**
-   
-   Create `/etc/logrotate.d/jira-automation`:
-   ```
-   /opt/jira-automation/logs/*.log {
-       daily
-       rotate 30
-       compress
-       delaycompress
-       notifempty
-       create 0640 automation-user automation-user
-   }
-   ```
-
-## 📚 Additional Documentation
-
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed system architecture and design
-- **API Documentation** - See inline code documentation
-- **Troubleshooting Guide** - See ARCHITECTURE.md Appendix D
+- **[OPERATIONS_GUIDE.md](OPERATIONS_GUIDE.md)** - Complete operations manual (service management, monitoring, troubleshooting)
+- **[VPS_DEPLOYMENT_INSTRUCTIONS.md](VPS_DEPLOYMENT_INSTRUCTIONS.md)** - VPS deployment guide
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and design
+- **[IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)** - Development guide
+- **[SLACK_INTERACTIVE_SETUP.md](jira-automation/SLACK_INTERACTIVE_SETUP.md)** - Slack integration setup
 
 ## 🤝 Contributing
 
@@ -442,6 +429,14 @@ For issues or questions:
 - Contact the development team
 - Check the troubleshooting guide in ARCHITECTURE.md
 
+## 🎮 Current Deployment
+
+**Status**: ✅ Live on Hostinger VPS
+- **URL**: http://31.97.231.244:5000
+- **Scheduler**: Runs every hour (10 tickets per run)
+- **Slack**: Interactive buttons enabled
+- **Python**: 3.12.3
+
 ## 🔮 Future Enhancements
 
 - [ ] Web dashboard for configuration
@@ -452,9 +447,11 @@ For issues or questions:
 - [ ] Performance analytics dashboard
 - [ ] Microsoft Teams integration
 - [ ] Email notifications
+- [ ] SSL/HTTPS support
 
 ---
 
-**Version**: 1.0  
-**Last Updated**: 2026-06-10  
-**Maintained By**: Development Team
+**Version**: 1.1
+**Last Updated**: 2026-06-12
+**Maintained By**: Surendran C
+**Repository**: https://github.com/surac95/jira-studio-lab
