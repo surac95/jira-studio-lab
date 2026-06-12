@@ -10,7 +10,7 @@ This module provides AI-powered analysis of JIRA tickets including:
 import json
 import time
 from typing import Dict, Any, List, Optional
-from mistralai.client import Mistral
+from mistralai import Mistral
 
 from config.settings import Settings
 from models.ticket import Ticket
