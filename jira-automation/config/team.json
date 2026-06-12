@@ -1,0 +1,35 @@
+{
+  "team_members": [
+    {
+      "name": "Chandrasekaran, Surendran",
+      "jira_username": "T3x-Surendran.Chandrasekaran@external.issworld.com",
+      "email": "T3x-Surendran.Chandrasekaran@external.issworld.com",
+      "specializations": ["TRIRIGA"],
+      "max_capacity": 5,
+      "current_ticket_count": 0,
+      "is_available": true
+    },
+    {
+      "name": "Kankara, Aruna",
+      "jira_username": "T3x-Aruna.Kankara@external.issworld.com",
+      "email": "T3x-Aruna.Kankara@external.issworld.com",
+      "specializations": ["APIC"],
+      "max_capacity": 5,
+      "current_ticket_count": 0,
+      "is_available": true
+    },
+    {
+      "name": "Anand, Shubham",
+      "jira_username": "T3x-Shubham.Anand@external.issworld.com",
+      "email": "T3x-Shubham.Anand@external.issworld.com",
+      "specializations": ["APIC"],
+      "max_capacity": 5,
+      "current_ticket_count": 0,
+      "is_available": true
+    }
+  ],
+  "metadata": {
+    "last_updated": "2026-06-10T11:55:00Z",
+    "version": "1.0.0"
+  }
+}
