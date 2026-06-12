@@ -58,7 +58,7 @@ echo ">>> Updating system packages..."
 apt update && apt upgrade -y
 
 echo ">>> Installing dependencies..."
-apt install -y python3.11 python3.11-venv python3-pip git supervisor nginx ufw
+apt install -y python3.12 python3.12-venv python3-pip git supervisor nginx ufw
 
 echo ">>> Creating application user (jirabot)..."
 if ! id -u jirabot > /dev/null 2>&1; then
@@ -81,7 +81,7 @@ fi
 cd /home/jirabot/jira-automation/jira-automation
 
 echo ">>> Setting up Python virtual environment..."
-sudo -u jirabot python3.11 -m venv venv
+sudo -u jirabot python3.12 -m venv venv
 sudo -u jirabot venv/bin/pip install --upgrade pip
 sudo -u jirabot venv/bin/pip install -r requirements.txt
 sudo -u jirabot venv/bin/pip install schedule==1.2.0

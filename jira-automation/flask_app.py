@@ -263,7 +263,9 @@ def handle_slack_interaction():
     """
     try:
         import json
-        from services import JiraService, AIService, SlackService
+        from services.jira_service import JiraService
+        from services.ai_service import AIService
+        from services.slack_service import SlackService
         
         # Parse the payload from Slack
         payload_str = request.form.get('payload')
@@ -318,6 +320,10 @@ def handle_deep_analysis_request(ticket_key: str, response_url: str):
         response_url: Slack response URL for sending the analysis
     """
     try:
+        from services.jira_service import JiraService
+        from services.ai_service import AIService
+        from services.slack_service import SlackService
+        
         logger.info(f"Starting deep analysis for {ticket_key}")
         
         # Initialize services
@@ -370,6 +376,9 @@ def handle_reanalyze_request(ticket_key: str, response_url: str):
         response_url: Slack response URL
     """
     try:
+        from services.jira_service import JiraService
+        from services.ai_service import AIService
+        
         logger.info(f"Re-analyzing ticket {ticket_key}")
         
         # Initialize services

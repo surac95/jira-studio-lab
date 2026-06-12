@@ -31,7 +31,7 @@ Print-Status "Checking SSH availability..."
 $sshCheck = Get-Command ssh -ErrorAction SilentlyContinue
 if (-not $sshCheck) {
     Print-Error "SSH command not found. Please install OpenSSH client."
-    Write-Host "Install from: Settings > Apps > Optional Features > OpenSSH Client"
+    Write-Host "Install from: Settings, Apps, Optional Features, OpenSSH Client"
     exit 1
 }
 
@@ -52,9 +52,9 @@ apt install -y python3.11 python3.11-venv python3-pip git supervisor nginx ufw
 echo ">>> Creating application user (jirabot)..."
 if ! id -u jirabot > /dev/null 2>&1; then
     adduser jirabot --disabled-password --gecos ""
-    echo "✓ User jirabot created"
+    echo "User jirabot created"
 else
-    echo "✓ User jirabot already exists"
+    echo "User jirabot already exists"
 fi
 
 echo ">>> Cloning repository..."
@@ -78,14 +78,14 @@ sudo -u jirabot venv/bin/pip install schedule==1.2.0
 echo ">>> Creating .env file template..."
 if [ ! -f ".env" ]; then
     sudo -u jirabot cp .env.example .env
-    echo "✓ .env file created from template"
-    echo "⚠ IMPORTANT: You need to edit /home/jirabot/jira-automation/jira-automation/.env with your credentials"
+    echo ".env file created from template"
+    echo "IMPORTANT: You need to edit /home/jirabot/jira-automation/jira-automation/.env with your credentials"
 else
-    echo "✓ .env file already exists"
+    echo ".env file already exists"
 fi
 
 echo ">>> Setting up Supervisor configuration..."
-cat > /etc/supervisor/conf.d/jira-automation.conf << 'EOF'
+cat > /etc/supervisor/conf.d/jira-automation.conf << 'SUPERVISOREOF'
 [program:jira-automation-scheduler]
 command=/home/jirabot/jira-automation/jira-automation/venv/bin/python /home/jirabot/jira-automation/jira-automation/scheduler.py
 directory=/home/jirabot/jira-automation/jira-automation
@@ -105,10 +105,10 @@ autorestart=true
 stderr_logfile=/var/log/jira-automation-flask.err.log
 stdout_logfile=/var/log/jira-automation-flask.out.log
 environment=PATH="/home/jirabot/jira-automation/jira-automation/venv/bin"
-EOF
+SUPERVISOREOF
 
 echo ">>> Setting up Nginx configuration..."
-cat > /etc/nginx/sites-available/jira-automation << 'EOF'
+cat > /etc/nginx/sites-available/jira-automation << 'NGINXEOF'
 server {
     listen 80;
     server_name 31.97.231.244;
@@ -121,7 +121,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
-EOF
+NGINXEOF
 
 ln -sf /etc/nginx/sites-available/jira-automation /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
@@ -145,7 +145,7 @@ supervisorctl status
 
 echo ""
 echo "========================================="
-echo "✓ Deployment Complete!"
+echo "Deployment Complete!"
 echo "========================================="
 echo ""
 echo "IMPORTANT NEXT STEPS:"

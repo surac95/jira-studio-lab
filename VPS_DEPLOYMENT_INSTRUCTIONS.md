@@ -54,7 +54,7 @@ ssh root@31.97.231.244
 apt update && apt upgrade -y
 
 # Install dependencies
-apt install -y python3.11 python3.11-venv python3-pip git supervisor nginx ufw
+apt install -y python3.12 python3.12-venv python3-pip git supervisor nginx ufw
 
 # Create app user
 adduser jirabot --disabled-password --gecos ""
@@ -65,7 +65,7 @@ sudo -u jirabot git clone https://github.com/surac95/jira-studio-lab.git jira-au
 cd jira-automation/jira-automation
 
 # Setup Python environment
-sudo -u jirabot python3.11 -m venv venv
+sudo -u jirabot python3.12 -m venv venv
 sudo -u jirabot venv/bin/pip install -r requirements.txt
 sudo -u jirabot venv/bin/pip install schedule==1.2.0
 
