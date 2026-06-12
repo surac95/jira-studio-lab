@@ -10,7 +10,7 @@ This module provides AI-powered analysis of JIRA tickets including:
 import json
 import time
 from typing import Dict, Any, List, Optional
-from mistralai.client import Mistral
+from mistralai.client import MistralClient
 
 from config.settings import Settings
 from models.ticket import Ticket
@@ -66,7 +66,7 @@ class AIService:
         
         # Initialize Mistral client
         try:
-            self.client = Mistral(api_key=settings.mistral_api_key)
+            self.client = MistralClient(api_key=settings.mistral_api_key)
             self.logger.info("Mistral AI client initialized successfully")
         except Exception as e:
             self.logger.error(f"Failed to initialize Mistral AI client: {e}")
