@@ -6,9 +6,12 @@ services:
     region: oregon
     plan: free
     branch: master
+    runtime: python
     buildCommand: "cd jira-automation && pip install -r requirements.txt"
     startCommand: "cd jira-automation && python flask_app.py"
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
       - key: JIRA_URL
         sync: false
       - key: JIRA_PAT_TOKEN
@@ -37,9 +40,12 @@ services:
     region: oregon
     plan: free
     branch: master
+    runtime: python
     buildCommand: "cd jira-automation && pip install -r requirements.txt && pip install schedule==1.2.0"
     startCommand: "cd jira-automation && python scheduler.py"
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
       - key: JIRA_URL
         sync: false
       - key: JIRA_PAT_TOKEN
